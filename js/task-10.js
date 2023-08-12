@@ -1,35 +1,44 @@
-const inputNum = document.querySelector('#controls>input')
-const btnCreate = document.querySelector('button[data-create]')
-const btnDestroy = document.querySelector('button[data-destroy]')
-const boxes = document.querySelector('#boxes')
-
 function getRandomHexColor() {
-	return `#${Math.floor(Math.random() * 16777215).toString(16)}`
+  return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
 }
 
-const createBoxes = amount => {
-	const elementsToAdd = []
-	for (let i = 0; i < amount; i++) {
-		const div = document.createElement('div')
-		div.style.height = `${30 + 10 * i}px`
-		div.style.width = `${30 + 10 * i}px`
-		div.style.background = getRandomHexColor()
-		elementsToAdd.push(div)
-	}
-	return elementsToAdd
+const controls = document.querySelector('controls');
+const inputNumberEl = document.querySelector('[type="number"]');
+const createBtnEl = document.querySelector('button[data-create]');
+const destroyBtnEl = document.querySelector('button[data-destroy]');
+const divBoxesEl = document.getElementById('boxes');
+divBoxesEl.style.display = 'flex';
+divBoxesEl.style.flexWrap = 'wrap';
+divBoxesEl.style.alignItems = 'center';
+divBoxesEl.style.marginTop = '30px';
+
+createBtnEl.addEventListener('click', () => {
+  //console.log(inputNumberEl.value);
+  if (
+    Number(inputNumberEl.value.trim()) > Number(inputNumberEl.max) ||
+    Number(inputNumberEl.value.trim()) < Number(inputNumberEl.min)
+  ) {
+    alert('Please enter number from 1 to 100');
+  } else {
+    createBoxes(inputNumberEl.value.trim());
+  }
+  inputNumberEl.value = '';
+});
+
+destroyBtnEl.addEventListener('click', destroyBoxes);
+
+function destroyBoxes() {
+  inputNumberEl.value = '';
+  divBoxesEl.innerHTML = '';
 }
 
-const destroyBoxes = () => {
-	boxes.innerHTML = ''
+function createBoxes(amount) {
+  let size = 30;
+  const boxesArr = [];
+  for (let i = 0; i < amount; i += Number(inputNumberEl.step)) {
+    size += 10 * i;
+    const div = `<div class="item" style="display: block; margin-right: 30px; margin-bottom: 30px; background-color: ${getRandomHexColor()}; width: ${size}px; height: ${size}px;"></div>`;
+    boxesArr.push(div);
+  }
+  divBoxesEl.insertAdjacentHTML('beforeend', boxesArr.join(''));
 }
-
-btnCreate.addEventListener('click', () => {
-	let boxesToAdd = createBoxes(inputNum.value)
-	boxes.append(...boxesToAdd)
-})
-
-console.log(inputNum.value)
-
-btnDestroy.addEventListener('click', () => {
-	destroyBoxes.call()
-})
